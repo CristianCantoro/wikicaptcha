@@ -1,0 +1,52 @@
+########################################
+#                                      #
+# wikicaptcha                          #
+#                                      #
+########################################
+
+wikicaptcha is an attemp to build a ReCAPTCHA-like[1], CAPTCHA system[2] to
+help correcting errors found in digitalization and collaborative transcriptions
+done on Wikisource[3], a Wikipedia's sister project.
+
+Wikisource aims to build a free (as in freedom) digital library, books in 
+Wikisource are released with a Creative Commons BY-SA license or are otherwise
+available to redistribute, copy, modify (e.g books which are in the Public 
+Domain)
+
+
+== History ==
+The history of the idea of using CAPTCHAs (and ReCAPTCHA in particular) on
+Wikipedia to aid digitization of books is a long one, as testified by its 
+insertion among the "Perennial proposals" page[4].
+
+However, in the case of Wikisource, the presence of a considerable amount of
+digitized books led some Wikisources in the Italian language community[5]
+to wonder if it was possible to use a similar system to help in the steps which
+characterize the insertion of a book in Wikisource, expecially in the 
+proofreading phase.
+
+An user of it.wikisource, Alex brollo[6] discovered that OCRed Djvu files
+contained a text layer which could be extracted and analyzed. The characters 
+for which the OCR was dubious were marked with a caret ("^").
+
+The idea is to set a system which exploits these features to build a ReCAPTCHA-
+like system to help correct for these dubious recognitions, as first proposted
+here[7].
+
+== Authors ==
+See AUTHORS file for details.
+
+== License ==
+See COPYING file for details.
+
+== Further reading == 
+* http://lists.wikimedia.org/pipermail/wikisource-l/2011-February/000939.html
+
+== References ==
+[1]http://en.wikipedia.org/wiki/reCAPTCHA
+[2]http://en.wikipedia.org/wiki/Captcha
+[3]http://wikisource.org/wiki/Main_Page
+[4]http://en.wikipedia.org/wiki/Wikipedia:Perennial_proposals#Use_reCAPTCHA
+[5]http://it.wikisource.org/wiki/Pagina_principale
+[6]http://it.wikisource.org/wiki/Utente:Alex_brollo
+[7]http://lists.wikimedia.org/pipermail/wikitech-l/2011-November/056078.html
