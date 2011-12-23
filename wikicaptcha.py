@@ -100,25 +100,29 @@ djvuinfile = os.path.normpath(os.path.join(CURR_DIR, djvuinfile_name))
 logger.info("Input file: %s" %djvuinfile)
 
 # ----- END option parsing ----
+
+# Djvu file object
 djvf = djv.wikidjvu(djvuinfile)
 
-#def _slice(x, start, end):
-#  return [int(x[i]) for i in range(start, end)]
-
-print "*"*15, '\n'
+# get the list of the words contained in page 2
 wl = djvf.get_wordlist_page(2)
 
+# print a list of unclear words (containing a caret ^)
 ul = djvf.unclear_caret()
 for uw in ul:
-  print str(uw)
+  print uw
+
+# produce a TIFF image of the fist unclear word
+uw1 = ul[0]
+print uw1
+
+tiffoutfile_name = "test/out.tiff"
+tiffoutfile = os.path.normpath(os.path.join(CURR_DIR, tiffoutfile_name))
+
+# produce TIFF file, note segment option is WxH+X+Y
+command="ddjvu %s -page=%s -format=tiff -segment %sx%s+%s+%s %s" %(djvuinfile, uw1.page, uw1.w, uw1.h, uw1.x, uw1.y, tiffoutfile)
+print command
+os.system(command)
 
 
-#for i in someconditionlist:
-#  unclear = djvufile.unclear()
 
-#wdb = data.Database(dbname, server)
-
-#for uw in unclear:
-#  tiff = tiff.generate_tiff(uw)
-#  row = wdb.row(uw, tiff)
-#  wdb.populate(row)

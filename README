@@ -33,6 +33,24 @@ The idea is to set a system which exploits these features to build a ReCAPTCHA-
 like system to help correct for these dubious recognitions, as first proposted
 here[7].
 
+== Sintax & options ==
+Usage: wikicaptcha [-h] [-v] [-p PAGE] [--debug] infile
+
+positional arguments:
+  infile                the input (.djvu) file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
+  -p PAGE, --page PAGE  first page to process
+  --debug               turn on debug messages
+
+== Examples ==
+In the 'test' directory you'll find a couple of djvu suitable to make test with
+wikicaptcha. Try, for example:
+
+./wikicaptcha test/Horse.djvu 
+
 == Authors ==
 See AUTHORS file for details.
 

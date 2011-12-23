@@ -38,11 +38,11 @@ def parsecli(appname, desc, vers, epi):
 
   parser.add_argument('-v', '--version', action='version', version=VERSIONTEXT)
 
-  parser.add_argument('infile', help='The input file')  
+  parser.add_argument('infile', help='input (.djvu) file')  
 
-  parser.add_argument('-p', '--page', help='The number of the first page to process')  
+  parser.add_argument('-p', '--page', help='number of the first page to process')  
 
-  parser.add_argument('--debug', action='store_true', help='Turn on debug messages')  
+  parser.add_argument('--debug', action='store_true', help='turn on debug messages')  
   args = parser.parse_args()
   
   if args.page is None:

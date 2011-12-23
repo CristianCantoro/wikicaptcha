@@ -1,0 +1,18 @@
+2011-12-22
+---------------
+* first commit;
+
+-- CristianCantoro (kikkocristian@gmail.com)
+
+2011-12-23
+---------------
+* commented out an installation check in WKCmod/install.py;
+
+---
+* minor fixes to comments and README;
+* added CHANGELOG file;
+* ignore .tiff files (.gitignore)
+* added w,h,x,y member to unclear (unclear.py)
+* produced TIFF file (wikicaptcha.py)
+
+-- CristianCantoro (kikkocristian@gmail.com)

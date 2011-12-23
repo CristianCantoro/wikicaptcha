@@ -25,6 +25,12 @@ class unclear_word(dict):
     self.coords = coords
     self.word = word
     
+    self.x=coords[0]
+    self.y=coords[1]
+    self.w=coords[2]-coords[0]
+    self.h=coords[3]-coords[1]
+
   def __str__(self):
     return "(page: %s - word: %s - coords: %s)" \
     %(self.page, self.word, self.coords)
+
