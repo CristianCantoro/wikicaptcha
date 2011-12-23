@@ -35,7 +35,7 @@ else:
       BASE_DIR = os.path.abspath(os.path.normpath(os.path.join(installed, '../')))
       INSTALLED = True
 
-if INSTALLED == None: raise IOError("Non sono riuscito a trovare la cartella di configurazione di %s" %APPNAME)
+#if INSTALLED == None: raise IOError("Non sono riuscito a trovare la cartella di configurazione di %s" %APPNAME)
 
 logger.debug("BASE_DIR: %s" %BASE_DIR)
 logger.debug("Installed: %s" %INSTALLED)
