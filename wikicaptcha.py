@@ -23,7 +23,7 @@ import os
 import sys
 
 # ----- module imports -----
-from WKCmod import wikidjvu as djv
+from WKCmod import wikidjvu
 from WKCmod.parse import parse
 from WKCmod.install import WIKICAPTCHA
 
@@ -75,6 +75,11 @@ logger = logging.getLogger('wikicaptcha')
 
 # ----- END logging -----
 
+# ----- SQLAlchemy -----
+import sqlalchemy as sqlalc
+
+# ----- END SQLAlchemy -----
+
 # ----- option parsing -----
 dizcli = parse()
 
@@ -101,28 +106,87 @@ logger.info("Input file: %s" %djvuinfile)
 
 # ----- END option parsing ----
 
+# --- create engine object (SQLAlchemy) -----
+# dialect+driver://user:password@host/dbname[?key=value..]
+dbuser = 'pywikicaptcha'
+dbpass = 'pywiki'
+dbhost = 'localhost'
+dbname = 'captcha'
+
+dbconfig = 'mysql://%s:%s@%s/%s'%(dbuser, dbpass, dbhost, dbname)
+dbengine = sqlalc.create_engine(dbconfig)
+dbengine.echo = True
+# --- END create engine object (SQLAlchemy) -----
+
+metadata = sqlalc.MetaData(dbengine)
+
+# ----- creating tables -----
+# *** import schemas ***
+from WKCmod import data
+
+data.wkdjv_table_schema(metadata)
+data.uws_table_schema(metadata)
+
+try:
+  metadata.create_all()
+  logger.info("Tables created!")
+except Exception as e:
+  logger.error("Exception: %s" %e)
+# ----- END creating tables -----
+
+rootsession = sqlalc.orm.sessionmaker(bind=dbengine)
+
+booksession = rootsession()
+
 # Djvu file object
-djvf = djv.wikidjvu(djvuinfile)
+#infile, title, author, edition, year, ISBN)
+title ='Horse-shoes and horse-shoeing'
+author ='George Fleming'
+edition = '1st'
+year = '1869'
+ISBN ='ABCD'
+djvf = wikidjvu.Wikidjvu(djvuinfile, title, author, edition, year, ISBN)
+
+booksession.add(djvf)
+booksession.commit()
 
 # get the list of the words contained in page 2
 wl = djvf.get_wordlist_page(2)
 
 # print a list of unclear words (containing a caret ^)
 ul = djvf.unclear_caret()
+print ul[1]
+
+
+
 for uw in ul:
   print uw
+  # produce a TIFF image of the second unclear word
+  tiffoutfile_name = "test/out.tiff"
+  tiffoutfile = os.path.normpath(os.path.join(CURR_DIR, tiffoutfile_name))
+  if tiffoutfile is None:
+      tiffoutfile='someuniquerandomname.tiff'
+  dirname = os.path.dirname(tiffoutfile)
+  filename, fileext = os.path.splitext(os.path.basename(tiffoutfile))
+  logger.info("dirname: %s, filename: %s, fileext: %s" %(dirname, filename, fileext))
 
-# produce a TIFF image of the fist unclear word
-uw1 = ul[0]
-print uw1
+  # produce TIFF file, note segment option is WxH+X+Y
+  command="ddjvu %s -page=%s -format=tiff -segment %sx%s+%s+%s %s" %(djvf.infile, uw.page, uw.w, uw.h, uw.x, uw.y, tiffoutfile)
+  #print command
+  os.system(command)
+    
+  jpgoutfile = os.path.join(dirname, filename + ".jpg")
+  logger.info("jpgoutfile: %s" %jpgoutfile)
+  command="convert %s %s" %(tiffoutfile, jpgoutfile)
+  #print command
+  os.system(command)
+  
+  blob = open(jpgoutfile, 'rb').read()
+  uw.set_image(blob)
+  
+  booksession.add(uw)
 
-tiffoutfile_name = "test/out.tiff"
-tiffoutfile = os.path.normpath(os.path.join(CURR_DIR, tiffoutfile_name))
-
-# produce TIFF file, note segment option is WxH+X+Y
-command="ddjvu %s -page=%s -format=tiff -segment %sx%s+%s+%s %s" %(djvuinfile, uw1.page, uw1.w, uw1.h, uw1.x, uw1.y, tiffoutfile)
-print command
-os.system(command)
-
+booksession.commit()
+booksession.close()
 
 

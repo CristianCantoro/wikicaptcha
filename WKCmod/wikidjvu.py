@@ -110,16 +110,43 @@ class context(djvu.decode.Context):
         i=i+1
       return text
 
-class wikidjvu():
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
+
+Base = declarative_base()
+
+class Wikidjvu(Base):
+  __tablename__ = 'wikidjvu'
+
+  bID = Column('bID', Integer, primary_key=True)
+  title = Column('title', String)
+  author = Column('author', String)
+  edition = Column('edition', String, nullable=True)
+  year = Column('year', Integer)
+  pages = Column('pages', Integer)
+  ISBN = Column('ISBN', String, nullable=True)
+  infile = Column('infile', String, nullable=False)
   
-  def __init__(self, infile):
-       self.context = context(infile)
-       
-       (path, name) = os.path.split(infile)
-       self.infile = infile
-       self.path = path
-       self.name = name
-       self.pages = self.context.get_pages()
+  def __init__(self, infile, title, author, edition, year, ISBN):
+    self.context = context(infile)
+
+    (path, name) = os.path.split(infile)
+    self.infile = infile
+    self.path = path
+    self.name = name
+    
+    self.title = title
+    self.author = author
+    self.edition = edition
+    self.year = year
+    self.ISBN = ISBN
+    
+    self.pages = self.context.get_pages()
+
+  def __repr__(self):
+    return "Wikidjvu(%s, %s, %s)" \
+    %(self.infile, self.title, self.author)
+
 
   def _check_pageno(self, pageno):
     if not (isinstance(pageno, int) and pageno >= 0):
@@ -172,13 +199,14 @@ class wikidjvu():
       unclist = []
       if "^" in w:
         coord = _slice(wc,1,4)
-        uw = unclear_word(pageno, coord, w)
+        #book, page, coords, word, column=None, par=None, line=None):
+        uw = unclear_word(self.bID, pageno, coord, w)
         unclist.append(uw)
     return unclist
 
   def unclear_caret(self):
     unclist = []
-    for pn in range(1, self.pages):
+    for pn in range(1, int(self.pages)):
       wl = self.get_wordlist_page(pn)
       for wc in wl:
         w = str(wc[-1])
@@ -186,6 +214,7 @@ class wikidjvu():
           if len(wc) != 6:
             raise IOError
           coord = _slice(wc,1,4)
-          uw = unclear_word(pn, coord, w)
+          #book, page, coords, word, column=None, par=None, line=None):
+          uw = unclear_word(self.bID, pn, coord, w)
           unclist.append(uw)
     return unclist
